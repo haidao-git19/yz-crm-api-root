@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.yz.admin.yzadmin.persistence.dao.crm.CrmYzArchiveDaoExt">
+
+	<resultMap id="ArchiveList" type="com.yao.yz.admin.yzadmin.persistence.model.crm.CrmYzArchiveExt">
+		<result property="id" column="id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="uid" column="uid"/>
+		<result property="sexComment" column="sex_comment"/>
+		<result property="selfDesc" column="self_desc"/>
+		<result property="photos" column="photos"/>
+		<result property="prescribePhotos" column="prescribe_photos"/>
+		<result property="inquiryFlag" column="inquiry_flag"/>
+		<result property="doctorDesc" column="doctor_desc"/>
+		<result property="questType" column="quest_type"/>
+		<result property="illnessKey" column="illness_key"/>
+		<result property="consult" column="consult"/>
+		<result property="advice" column="advice"/>
+		<result property="bookDoctorId" column="book_doctor_id"/>
+		<result property="bookDate" column="book_date"/>
+		<result property="bookStart" column="book_start"/>
+		<result property="bookEnd" column="book_end"/>
+		<result property="bookDesc" column="book_desc"/>
+		<result property="doctorId" column="doctor_id"/>
+		<result property="sourceId" column="source_id"/>
+		<result property="guestDepartment" column="guest_department"/>
+		<result property="bookDepartment" column="book_department"/>
+		<result property="finishFlag" column="finish_flag"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="inquiryId" column="inquiry_id"/>
+		<result property="deseaseHisRecord" column="desease_his_record"/>
+		<result property="initialCheck" column="initial_check"/>
+		<result property="nickName" column="nick_name"/>
+		<result property="age" column="age"/>
+		<result property="ageType" column="age_type"/>
+
+		<association property="bookDoctor" column="book_doctor_id" select="DoctorById"></association>
+		
+		<association property="questDoctor" column="doctor_id" select="DoctorById"></association>
+
+		<association property="bookDepName" column="book_department" select="DepartmentName"></association>
+		
+		<association property="questDepName" column="guest_department" select="DepartmentName"></association>
+	</resultMap>
+
+	<!--查询科室名称-->
+	<select id="DepartmentName" resultType="java.lang.String">
+		select name from yz_meta_department where tag_key = #{tag_key};
+	</select>
+
+	<!--查询医生-->
+	<select id="DoctorById" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzDoctorDao.yzDoctorResultMap">
+		select * from yz_doctor where id = #{id}
+	</select>
+
+	<!--根据用户uid查询健康档案列表-->
+	<select id="archiveList" resultMap="ArchiveList">
+		select * from yz_archive where uid = #{uid} order by create_time desc
+	</select>
+
+<!--更新健康档案-->
+<!-- 	
+	<update id="updateArchive" parameterType="com.yao.yz.admin.yzadmin.persistence.dao.model.YzArchive">
+		update yz_archive set
+				`create_time`=#{createTime},
+				`uid`=#{uid},
+				`self_desc`=#{selfDesc},
+				`photos`=#{photos},
+				`prescribe_photos`=#{prescribePhotos},
+				`inquiry_flag`=#{inquiryFlag},
+				`doctor_desc`=#{doctorDesc},
+				`quest_type`=#{questType},
+				`illness_key`=#{illnessKey},
+				`consult`=#{consult},
+				`advice`=#{advice},
+				`book_doctor_id`=#{bookDoctorId},
+				`book_date`=#{bookDate},
+				`book_start`=#{bookStart},
+				`book_end`=#{bookEnd},
+				`book_desc`=#{bookDesc},
+				`doctor_id`=#{doctorId},
+				`source_id`=#{sourceId},
+				`guest_department`=#{guestDepartment},
+				`book_department`=#{bookDepartment},
+				`finish_flag`=#{finishFlag},
+				`update_time`=#{updateTime} 
+		where `id`=#{id}
+	</update> 
+	-->
+
+	<!--查询健康档案列表，根据用户uid，处理科室查询用户健康档案列表-->
+	<select id="selectArchiveExts" resultMap="ArchiveList">
+		select * from yz_archive where uid = #{0} and guest_department = #{1} order by create_time desc
+	</select>
+	
+	<!--根据source_id查询健康档案列表-->
+	<select id="archiveListBySource" resultMap="ArchiveList">
+		select * from yz_archive where source_id = #{0} order by create_time asc
+	</select>
+	
+	<!-- 根据用户编号、处理科室编号筛选子健康健康包含指定处理科室编号的源健康档案列表 -->
+	<select id="archiveListByDep" resultMap="ArchiveList">
+		select a.* from yz_archive a right join 
+			(select id from yz_archive where uid = #{0} and guest_department = #{1} and source_id is null 
+				union 
+			select source_id as id from yz_archive where uid = #{0} and guest_department = #{1} and source_id is not null group by source_id) b 
+		on b.id = a.id order by a.create_time desc
+	</select>
+
+</mapper>

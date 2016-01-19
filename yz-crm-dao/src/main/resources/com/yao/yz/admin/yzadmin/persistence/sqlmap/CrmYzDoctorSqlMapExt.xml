@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.yz.admin.yzadmin.persistence.dao.crm.CrmYzDoctorDaoExt">
+
+	<select id="getPrivateDoctors" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzDoctorDao.yzDoctorResultMap">
+		select a.* from yz_doctor a INNER JOIN yz_user_doctor b on a.id = b.doctor_id where b.uid = #{0} and a.department = #{1}
+	</select>
+
+	<select id="getDoctorsByDep" parameterType="java.lang.Integer" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzDoctorDao.yzDoctorResultMap">
+		select * from yz_doctor doctor where department = #{department} and is_inside = '1'
+	</select>
+	
+	<select id="getDoctorList" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzDoctorDao.yzDoctorResultMap">
+    	select * from yz_doctor doctor
+    </select>
+    
+    <!-- 根据登录坐查询对应的医生 -->
+    <!--
+    	v2.0版本以后废弃不再使用
+     
+	<select id="getDoctorBySeat" parameterType="java.lang.String" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzDoctorDao.yzDoctorResultMap">
+		select * from yz_doctor where seat = #{0}
+	</select>
+	 -->
+	 
+	<!-- 根据登录帐号查询对应医生信息 -->
+	<resultMap id="yzDoctorExtMap" type="com.yao.yz.admin.yzadmin.persistence.model.crm.CrmYzDoctorExt">
+		<!-- 原始字段 -->
+		<result property="id" column="id"/>
+		<result property="firstName" column="first_name"/>
+		<result property="secondName" column="second_name"/>
+		<result property="face" column="face"/>
+		<result property="hostpital" column="hostpital"/>
+		<result property="department" column="department"/>
+		<result property="title" column="title"/>
+		<result property="goodAt" column="good_at"/>
+		<result property="seat" column="seat"/>
+		<result property="description" column="description"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="blgHostpitalDepartment" column="blg_hostpital_department"/>
+		<result property="departmentTelephone" column="department_telephone"/>
+		<result property="hospitalId" column="hospital_id"/>
+		<result property="creater" column="creater"/>
+		<result property="birthdate" column="birthdate"/>
+		<result property="workyeas" column="workyeas"/>
+		<result property="educationBg" column="education_bg"/>
+		<result property="cardNum" column="card_num"/>
+		<result property="addProvince" column="add_province"/>
+		<result property="addCity" column="add_city"/>
+		<result property="addDetail" column="add_detail"/>
+		<result property="doctorType" column="doctor_type"/>
+		<result property="qualification" column="qualification"/>
+		<result property="mobile" column="mobile"/>
+		<result property="email" column="email"/>
+		<result property="sex" column="sex"/>
+		<result property="goodAtFlag" column="good_at_flag"/>
+		<result property="isInside" column="is_inside"/>
+		<result property="serviceType" column="service_type"/>
+		<result property="loginUserName" column="login_user_name"/>
+		<result property="status" column="status"/>
+		<result property="blgHostpitalSecDepartment" column="blg_hostpital_sec_department"/>
+		<result property="orderSimuNum" column="order_simu_num"/>
+		<result property="referrerInfo" column="referrer_info"/>
+		<result property="valuedStar" column="valued_star"/>
+		
+		<!-- 扩展字段 -->
+		<result property="departmentName" column="departmentName"/>
+	</resultMap>
+	
+	<!-- 根据登录帐号查询医生信息 -->
+	<select id="getDoctorByAccount" resultMap="yzDoctorExtMap">
+		select a.*,b.`name` as departmentName from yz_doctor a left join yz_meta_department b on a.department = b.tag_key where a.login_user_name = #{0}
+	</select>
+	
+	<!-- 查询医生的最后一条打卡记录 -->
+	<select id="getLastRecord" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.DoctorWorkRecordDao.doctorWorkRecordResultMap">
+		select * from doctor_work_record where doctor_id = #{0} and record_date = #{1} order by id Desc LIMIT 0,1
+	</select>
+	
+	<!-- 查询某个医生的待处理诊单数量 -->
+	<select id="getWaitCount" resultType="java.lang.Integer">
+		SELECT count(id) from yz_inquery WHERE finish_flag in ('N','D') and assign_doctor_Id=#{0}
+	</select>
+	
+	<!-- 查询当前在线的自营医生 -->
+	<select id="getSelfOnLine" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzDoctorDao.yzDoctorResultMap">
+		select yz_doctor.* from yz_doctor LEFT JOIN doctor_work_record on yz_doctor.id = doctor_work_record.doctor_id where yz_doctor.department = #{0} and (yz_doctor.doctor_type = 1 or yz_doctor.doctor_type = 2) and yz_doctor.is_inside = 1 and doctor_work_record.record_date = #{1} and doctor_work_record.status = 2
+	</select>
+	
+</mapper>

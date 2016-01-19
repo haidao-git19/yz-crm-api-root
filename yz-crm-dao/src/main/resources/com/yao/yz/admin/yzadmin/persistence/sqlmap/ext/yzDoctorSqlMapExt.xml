@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.yz.admin.yzadmin.persistence.dao.ext.YzDoctorDaoExt">
+
+	<!--数据库字段与对象属性映射 -->
+	<resultMap id="yzDoctorResultMap"
+		type="com.yao.yz.admin.yzadmim.model.ext.YzDoctorExt">
+		<result property="id" column="id" />
+		<result property="firstName" column="first_name" />
+		<result property="secondName" column="second_name" />
+		<result property="face" column="face" />
+		<result property="hostpital" column="hostpital" />
+		<result property="department" column="department" />
+		<result property="title" column="title" />
+		<result property="goodAt" column="good_at" />
+		<result property="description" column="description" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<!-- 扩展 -->
+		<result property="doctorName" column="doctorName" />
+		<!-- <result property="departmentName" column="departmentName" />
+		<result property="titleName" column="titleName" /> -->
+	</resultMap>
+
+	<!--查询 -->
+	<select id="getYzDoctorsByDepartId" resultMap="yzDoctorResultMap"
+		parameterType="java.lang.Integer">
+		select
+		`id`,`first_name`,`second_name`,`face`,`hostpital`,`department`,`title`,`good_at`,`description`,`create_time`,`update_time`
+		from yz_doctor where `department`=#{department}
+	</select>
+
+	<select id="getDocListByUid" resultMap="yzDoctorResultMap"
+		parameterType="java.lang.Integer">
+		select 		       
+		       t1.*,
+		       CONCAT(IFNULL(t1.second_name,''),IFNULL(t1.first_name,''))  "doctorName",
+		       t1.face 
+		from   yz_doctor t1,yz_user_doctor t2 
+		where  t1.id=t2.doctor_id 
+		 and   t2.uid= #{userId} 
+	</select>
+	
+	<select id="getDocByLoginUserName" parameterType="java.lang.String" resultMap="yzDoctorResultMap">
+	    select t1.* , CONCAT(IFNULL(t1.second_name,''),IFNULL(t1.first_name,''))  "doctorName" from yz_doctor t1 where t1.login_user_name =#{loginUserName} 
+	</select>
+	
+	<select id="getDocByMobile" parameterType="java.lang.String" resultMap="yzDoctorResultMap">
+		SELECT * FROM yz_doctor WHERE mobile=#{mobile}
+	</select>
+	
+    <select id="getDocListAll" parameterType="java.util.Map" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzDoctorDao.yzDoctorResultMap">
+        select * from yz_doctor order by id 
+    </select>
+    
+</mapper>

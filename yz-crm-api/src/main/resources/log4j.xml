@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration>
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss.SSS\} %-5p][%t]%c{1}.%M(%L) | %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="LOGFILE" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/app/yz/logs/crm/yz-crm-api.log" />
+		<param name="DatePattern" value=".yyyyMMdd" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss.SSS\} %-5p][%t]%c{1}.%M(%L) | %m%n" />
+		</layout>
+	</appender>
+
+	<!-- dubbo错误日志 -->
+	<appender name="dubboAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/app/yz/logs/crm/yz-crm-dubbo.log" />
+		<param name="DatePattern" value=".yyyyMMdd" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- http调用日志 -->
+	<appender name="httpClientAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/app/yz/logs/crm/yz-crm-httpclient.log" />
+		<param name="DatePattern" value=".yyyyMMdd" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- 外部接口日志 -->
+	<appender name="ThirdAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/app/yz/logs/crm/yz-crm-third.log" />
+		<param name="DatePattern" value=".yyyyMMdd" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- sql日志 -->
+	<appender name="SQLAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/app/yz/logs/crm/yz-crm-sql.log" />
+		<param name="DatePattern" value=".yyyyMMdd" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- frequency日志 -->
+	<appender name="frequencyAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/app/yz/logs/crm/yz-crm-frequency.log" />
+		<param name="DatePattern" value=".yyyyMMdd" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- 循环调用 -->
+	<logger name="frequency" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="frequencyAppender" />
+	</logger>
+
+	<!-- http日志 -->
+	<logger name="org.apache.commons.httpclient" additivity="false">
+		<level value="trace" />
+		<appender-ref ref="httpClientAppender" />
+	</logger>
+
+	<!-- dubbo日志 -->
+	<logger name="com.alibaba.dubbo" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="dubboAppender" />
+	</logger>
+
+	<!-- 分诊系统日志 -->
+	<logger name="com.yao.yz.biz.dispatch" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="ThirdAppender" />
+		<appender-ref ref="LOGFILE" />
+	</logger>
+
+	<!-- sql日志 -->
+	<logger name="com.yao.yz.crm.web.inteceptor" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="SQLAppender" />
+	</logger>
+
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="LOGFILE" />
+	</root>
+</log4j:configuration>

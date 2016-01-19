@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.yz.admin.yzadmin.persistence.dao.crm.CrmInqueryDaoExt">
+
+<!--数据库字段与对象属性映射 -->
+    <resultMap id="InqueryResultMap" type="com.yao.yz.admin.yzadmin.persistence.model.crm.CrmInqueryExt">
+		<result property="id" column="id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="uid" column="uid"/>
+		<result property="photos" column="photos"/>
+		<result property="selfDesc" column="self_desc"/>
+		<result property="guestDepartment" column="guest_department"/>
+		<result property="finishFlag" column="finish_flag"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="opAccountId" column="op_account_id"/>
+		<result property="opAccountName" column="op_account_name"/>
+		<result property="archiveId" column="archive_id"/>
+		<result property="processFlag" column="process_flag"/>
+		<association property="user" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzUser">
+		  <result property="uid" column="uid"/>
+		  <result property="secondName" column="second_name"/>
+		  <result property="sex" column="sex"/>
+		</association>
+		<association property="department" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzMetaDepartment">
+		  <result property="id" column="id"/>
+		  <result property="name" column="name"/>
+		</association>
+	</resultMap>
+	
+	<resultMap id="InqueryResultMap2" type="com.yao.yz.admin.yzadmin.persistence.model.crm.CrmInqueryExt">
+		<result property="id" column="id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="uid" column="uid"/>
+		<result property="photos" column="photos"/>
+		<result property="selfDesc" column="self_desc"/>
+		<result property="guestDepartment" column="guest_department"/>
+		<result property="finishFlag" column="finish_flag"/>
+		<result property="finishTime" column="finish_time"/>
+		<result property="opAccountId" column="op_account_id"/>
+		<result property="opAccountName" column="op_account_name"/>
+		<result property="archiveId" column="archive_id"/>
+		<result property="processFlag" column="process_flag"/>
+		<result property="assignDoctorName" column="assign_doctor_name"/>
+		<association property="user" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzUser">
+		  <result property="uid" column="uid"/>
+		  <result property="secondName" column="second_name"/>
+		  <result property="sex" column="sex"/>
+		</association>
+		<association property="department" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzMetaDepartment">
+		  <result property="id" column="id"/>
+		  <result property="name" column="name"/>
+		</association>
+		<association property="archive" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzArchive">
+		  <result property="id" column="id"/>
+		  <result property="finishFlag" column="archive_status"/>
+		</association>
+	</resultMap>
+	
+	<resultMap id="InqueryResultMap3" type="com.yao.yz.admin.yzadmin.persistence.model.crm.CrmInqueryExt">
+		<result property="id" column="id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="uid" column="uid"/>
+		<result property="photos" column="photos"/>
+		<result property="selfDesc" column="self_desc"/>
+		<result property="guestDepartment" column="guest_department"/>
+		<result property="finishFlag" column="finish_flag"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="opAccountId" column="op_account_id"/>
+		<result property="opAccountName" column="op_account_name"/>
+		<result property="archiveId" column="archive_id"/>
+		<result property="processFlag" column="process_flag"/>
+		<result property="opDoctorName" column="op_doctor_name"/>
+		<association property="user" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzUser">
+		  <result property="uid" column="uid"/>
+		  <result property="secondName" column="second_name"/>
+		  <result property="sex" column="sex"/>
+		</association>
+		<association property="department" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzMetaDepartment">
+		  <result property="id" column="id"/>
+		  <result property="name" column="name"/>
+		</association>
+		<association property="archive" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzArchive">
+		  <result property="id" column="id"/>
+		  <result property="finishFlag" column="archive_status"/>
+		</association>
+		<association property="inquerySmsLog" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzInquerySmsLog">
+		  <result property="id" column="id"/>
+		  <result property="smsType" column="sms_type"/>
+		  <result property="smsSendTime" column="sms_send_time"/>
+		</association>
+	</resultMap>
+	
+	<select id="getInqueryList" parameterType="int" resultMap="InqueryResultMap">
+	     SELECT a.*,b.second_name,b.sex,c.`name`
+	     FROM yz_inquery a 
+         LEFT JOIN yz_user b on a.uid=b.uid 
+         LEFT JOIN yz_meta_department c on a.guest_department=c.tag_key 
+	     where finish_flag='N'
+	     order by a.create_time
+    </select>
+    
+    <update id="finish" parameterType="int">
+		update yz_inquery set finish_flag='Y' where `id`=#{id}
+	</update>
+	
+	<update id="updateProcessFlag" parameterType="int">
+		update yz_inquery set process_flag='Y' where `id`=#{id}
+	</update>
+	
+	<select id="getPagerList" resultMap="InqueryResultMap2" parameterType="java.util.Map">
+		SELECT a.id,a.archive_id,a.create_time,a.update_time,a.uid,a.self_desc,a.finish_flag,a.op_doctor_name,b.second_name,b.sex,c.`name`,d.finish_flag archive_status
+	     FROM yz_inquery a 
+         LEFT JOIN yz_user b on a.uid=b.uid 
+         LEFT JOIN yz_meta_department c on a.guest_department=c.tag_key 
+         LEFT JOIN yz_archive d on a.archive_id=d.id
+         where a.finish_flag in (#{mode1,jdbcType=VARCHAR},#{mode2,jdbcType=VARCHAR})
+		<include refid="queryCondition"/>
+		<if test="mode != null">
+			order by a.create_time
+		</if>
+		<if test="mode == null">
+			order by a.update_time
+		</if>
+	</select>
+	
+	<select id="getListCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT count(*)
+	     FROM yz_inquery a 
+         LEFT JOIN yz_user b on a.uid=b.uid 
+         LEFT JOIN yz_meta_department c on a.guest_department=c.tag_key 
+         LEFT JOIN yz_archive d on a.archive_id=d.id
+         where a.finish_flag in (#{mode1,jdbcType=VARCHAR},#{mode2,jdbcType=VARCHAR})
+		<include refid="queryCondition"/>
+	 </select>
+	 
+	 <sql id="queryCondition">
+			<if test="department_id != null and department_id != '' ">
+				AND a.guest_department = #{department_id,jdbcType=VARCHAR}
+			</if>
+			<if test="uid != null and uid != '' ">
+				AND a.uid = #{uid,jdbcType=VARCHAR}
+			</if>
+			<if test="inquery_flag != null and inquery_flag != '' ">
+				AND a.finish_flag = #{inquery_flag,jdbcType=VARCHAR}
+			</if>
+			<if test="op_doctor_name != null and op_doctor_name != '' ">
+				AND a.op_doctor_name like CONCAT('%', #{op_doctor_name,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="create_time_begin != null and create_time_begin != '' ">
+				AND a.create_time <![CDATA[>=]]> str_to_date(#{create_time_begin,jdbcType=VARCHAR},'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="create_time_end != null and create_time_end != '' ">
+				AND a.create_time <![CDATA[<=]]> str_to_date(#{create_time_end,jdbcType=VARCHAR},'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="archive_flag != null and archive_flag != '' ">
+				AND d.finish_flag = #{archive_flag,jdbcType=VARCHAR}
+			</if>
+			<if test="update_time_begin != null and update_time_begin != '' ">
+				AND a.update_time <![CDATA[>=]]> str_to_date(#{update_time_begin,jdbcType=VARCHAR},'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="update_time_end != null and update_time_end != '' ">
+				AND a.update_time <![CDATA[<=]]> str_to_date(#{update_time_end,jdbcType=VARCHAR},'%Y-%m-%d %H:%i:%s')
+			</if>
+  	</sql>
+  	
+  	<update id="cancelInquery" parameterType="int">
+		update yz_inquery set finish_flag='C' where `id`=#{id}
+	</update>
+	
+	<select id="getCallDuration" parameterType="int" resultType="java.lang.Integer">
+		SELECT timestampdiff(SECOND,start_callback_time,end_callback_time) from yz_call_statistics where id=#{id}
+	</select>
+	
+	<update id="insertCallDuration">
+		update yz_inquery set call_duration=#{0} where `id`=#{1} and (call_duration is null or call_duration=0)
+	</update>
+	
+	<select id="getUndoCount" resultType="java.lang.Integer">
+		SELECT count(*) FROM yz_inquery where finish_flag ='N'
+		AND create_time <![CDATA[>=]]> str_to_date(#{0},'%Y-%m-%d %H:%i:%s')
+		AND create_time <![CDATA[<=]]> str_to_date(#{1},'%Y-%m-%d %H:%i:%s')
+	 </select>
+	 
+	 <!-- 更新诊单状态 -->
+	<update id="updateInqueryStatus">
+		update yz_inquery set finish_flag=#{1},op_account_name = #{2},archive_id=#{3},op_doctor_name=#{4},update_time=#{5},op_account_id = #{6} where id=#{0}
+	</update> 
+	 
+	
+	<!-- V1.3开始 -->
+	<!-- 获取某个医生的待处理诊单列表 -->
+	<select id="getUndoListV3" resultMap="InqueryResultMap3" parameterType="java.util.Map">
+		SELECT a.id,a.create_time,a.uid,a.self_desc,a.finish_flag,b.second_name,b.sex,c.`name`,d.finish_flag archive_status,e.sms_type,e.sms_send_time
+		 FROM yz_inquery a 
+		 LEFT JOIN yz_user b on a.uid=b.uid 
+		 LEFT JOIN yz_meta_department c on a.guest_department=c.tag_key 
+		 LEFT JOIN yz_archive d on a.archive_id=d.id
+		 LEFT JOIN (SELECT * from yz_inquery_sms_log where sms_send_time in (SELECT max(sms_send_time) from yz_inquery_sms_log group by inquery_id)) e on a.id=e.inquery_id
+		 WHERE a.finish_flag in ('N','D') 
+		 AND a.assign_doctor_id=#{doctor_id,jdbcType=VARCHAR}
+		 <if test="inquery_status != null and inquery_status != '' ">
+				AND a.finish_flag = #{inquery_status,jdbcType=VARCHAR}
+		 </if>
+		 <if test="order_by == 'ASC' ">
+				ORDER BY a.create_time ASC
+		 </if>
+		 <if test="order_by == 'DESC' ">
+				ORDER BY a.create_time DESC
+		 </if>
+	</select>
+	
+	<!-- 获取某个医生的待处理诊单数量 -->
+	<select id="getUndoCountV3" resultType="java.lang.Integer">
+		SELECT count(*) from yz_inquery WHERE finish_flag in ('N','D') and assign_doctor_Id=#{doctor_id}
+	 </select>
+	 
+	 <!-- 获取某个医生的已处理诊单列表 -->
+	 <select id="getHistoryListV3" resultMap="InqueryResultMap2" parameterType="java.util.Map">
+		SELECT a.id,a.finish_time,a.uid,a.self_desc,a.finish_flag,a.assign_doctor_name,a.archive_id,b.second_name,b.sex,c.`name`,d.finish_flag archive_status
+		 FROM yz_inquery a 
+		 LEFT JOIN yz_user b on a.uid=b.uid 
+		 LEFT JOIN yz_meta_department c on a.guest_department=c.tag_key 
+		 LEFT JOIN yz_archive d on a.archive_id=d.id
+		 WHERE a.finish_flag in ('C','Y') 
+		 AND a.assign_doctor_type = 1
+		 <include refid="queryCondition2"/>
+		 ORDER BY a.finish_time DESC
+	</select>
+	
+	<sql id="queryCondition2">
+	        <if test="doctor_id != null and doctor_id != '' ">
+				AND a.assign_doctor_id = #{doctor_id,jdbcType=VARCHAR}
+			</if>
+			<if test="department_id != null and department_id != '' ">
+				AND a.guest_department = #{department_id,jdbcType=VARCHAR}
+			</if>
+			<if test="uid != null and uid != '' ">
+				AND a.uid = #{uid,jdbcType=VARCHAR}
+			</if>
+			<if test="inquery_id != null and inquery_id != '' ">
+				AND a.id = #{inquery_id,jdbcType=VARCHAR}
+			</if>
+			<if test="op_doctor_name != null and op_doctor_name != '' ">
+				AND a.assign_doctor_name like CONCAT('%', #{op_doctor_name,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="archive_flag != null and archive_flag != '' ">
+				AND d.finish_flag = #{archive_flag,jdbcType=VARCHAR}
+			</if>
+			<if test="update_time_begin != null and update_time_begin != '' ">
+				AND a.finish_time <![CDATA[>=]]> str_to_date(#{update_time_begin,jdbcType=VARCHAR},'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="update_time_end != null and update_time_end != '' ">
+				AND a.finish_time <![CDATA[<=]]> str_to_date(#{update_time_end,jdbcType=VARCHAR},'%Y-%m-%d %H:%i:%s')
+			</if>
+  	</sql>
+	
+	<!-- 获取某个医生的已处理诊单数量 -->
+	<select id="getHistoryCountV3" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT count(*)
+		 FROM yz_inquery a 
+		 LEFT JOIN yz_user b on a.uid=b.uid 
+		 LEFT JOIN yz_meta_department c on a.guest_department=c.tag_key 
+		 LEFT JOIN yz_archive d on a.archive_id=d.id
+		 WHERE a.finish_flag in ('C','Y')
+		<include refid="queryCondition2"/>
+	 </select>
+	 <sql id="queryCondition3">
+	        <if test="doctor_id != null and doctor_id != '' ">
+				AND assign_doctor_id = #{doctor_id,jdbcType=VARCHAR}
+			</if>
+			<if test="doctor_id == null or doctor_id == '' ">
+				AND assign_doctor_type = 1
+			</if>
+  	</sql>
+	
+	<!-- 根据登录名获取医生信息 -->
+	<select id="getDoctorByLoginName" parameterType="java.lang.String" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzDoctorDao.yzDoctorResultMap">
+		select * from yz_doctor doctor where login_user_name = #{userName}
+	</select>
+	
+	<resultMap id="InqueryResultMap4" type="com.yao.yz.admin.yzadmin.persistence.model.crm.CrmInqueryExt">
+		<result property="id" column="id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="uid" column="uid"/>
+		<result property="selfDesc" column="self_desc"/>
+		<result property="finishFlag" column="finish_flag"/>
+		<result property="assignDoctorName" column="assign_doctor_name"/>
+		<result property="assignDoctorType" column="assign_doctor_type"/>
+		<result property="assignFlag" column="assign_flag"/>
+		<result property="assignDoctorId" column="assign_doctor_id"/>
+		<association property="department" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzMetaDepartment">
+		  <result property="id" column="id"/>
+		  <result property="name" column="name"/>
+		</association>
+	</resultMap>
+	
+	<!-- 查询所有诊单 --> 
+	<select id="getAllListV3" resultMap="InqueryResultMap4" parameterType="java.util.Map">
+		SELECT a.id,a.create_time,a.uid,b.`name`,a.self_desc,a.finish_flag,a.assign_doctor_name,a.assign_doctor_type,a.assign_flag,a.assign_doctor_Id
+		 FROM yz_inquery a 
+		 LEFT JOIN yz_meta_department b on a.guest_department=b.tag_key WHERE 1=1
+		 <include refid="queryCondition4"/>
+         ORDER BY a.create_time
+	</select>
+	<select id="getAllListCountV3" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT count(*) FROM yz_inquery a 
+		 LEFT JOIN yz_meta_department b on a.guest_department=b.tag_key WHERE 1=1
+		<include refid="queryCondition4"/>
+	 </select>
+	<sql id="queryCondition4">
+	        <if test="department_id != null and department_id != '' ">
+				AND a.guest_department = #{department_id,jdbcType=VARCHAR}
+			</if>
+	        <if test="inquery_status != null and inquery_status != '' ">
+				AND a.finish_flag = #{inquery_status,jdbcType=VARCHAR}
+			</if>
+			<if test="assign_doctor_type != null and assign_doctor_type != '' ">
+				AND a.assign_doctor_type = #{assign_doctor_type,jdbcType=VARCHAR}
+			</if>
+			<if test="assign_doctor_name != null and assign_doctor_name != '' ">
+				AND a.assign_doctor_name like CONCAT('%', #{assign_doctor_name,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="assign_flag != null and assign_flag != '' ">
+				AND a.assign_flag = #{assign_flag,jdbcType=VARCHAR}
+			</if>
+			<if test="uid != null and uid != '' ">
+				AND a.uid = #{uid,jdbcType=VARCHAR}
+			</if>
+			<if test="inquery_id != null and inquery_id != '' ">
+				AND a.id = #{inquery_id,jdbcType=VARCHAR}
+			</if>
+			<if test="create_time_begin != null and create_time_begin != '' ">
+				AND a.create_time <![CDATA[>=]]> str_to_date(#{create_time_begin,jdbcType=VARCHAR},'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="create_time_end != null and create_time_end != '' ">
+				AND a.create_time <![CDATA[<=]]> str_to_date(#{create_time_end,jdbcType=VARCHAR},'%Y-%m-%d %H:%i:%s')
+			</if>
+  	</sql>
+	
+	<select id="getFailedAssignCountV3" resultType="java.lang.Integer">
+		SELECT count(*) from yz_inquery WHERE assign_flag =2
+	 </select>
+</mapper>

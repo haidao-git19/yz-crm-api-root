@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.yz.admin.yzadmin.persistence.dao.crm.CrmYzMetaDepartmentDaoExt">
+
+	<!-- 查询科室列表 -->
+	<select id="getDepartments" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzMetaDepartmentDao.yzMetaDepartmentResultMap">
+		select * from yz_meta_department
+	</select>
+	
+	<!-- 根据tagKey查询科室信息 -->
+	<select id="getDepartmentByTagKey" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzMetaDepartmentDao.yzMetaDepartmentResultMap">
+		select * from yz_meta_department where tag_key = #{0}
+	</select>
+	
+</mapper>

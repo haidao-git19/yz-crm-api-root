@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.yz.admin.yzadmin.persistence.dao.crm.CrmSmsDaoExt">
+
+	<select id="getSmsList" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzSmsDao.yzSmsResultMap">
+	     SELECT * FROM yz_sms where book_time &gt;= CURDATE() and `status`='N'
+    </select>
+    
+    <update id="finish" parameterMap="com.yao.yz.admin.yzadmin.persistence.dao.YzSmsDao.yzSmsParameterMap">
+		update yz_sms set `status`=#{status},send_time=#{sendTime} where `id`=#{id}
+	</update>
+</mapper>

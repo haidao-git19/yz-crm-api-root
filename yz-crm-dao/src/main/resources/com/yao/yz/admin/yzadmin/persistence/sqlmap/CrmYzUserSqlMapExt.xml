@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.yz.admin.yzadmin.persistence.dao.crm.CrmYzUserDaoExt">
+
+	<select id="searchUser" parameterMap="com.yao.yz.admin.yzadmin.persistence.dao.YzUserDao.yzUserParameterMap" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzUserDao.yzUserResultMap">
+		select * from yz_user  
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+		   <if test="uid != null and uid !=''">
+				`uid` = #{uid}
+			</if>
+			<if test="mobile != null and mobile !=''">
+				 and `mobile` like #{mobile}"%"
+			</if>
+		</trim>
+	</select>
+	
+	<select id="getUserByMobile" parameterType="java.lang.String" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzUserDao.yzUserResultMap">
+		select * from yz_user where mobile=  #{mobile}
+	</select>
+
+</mapper>

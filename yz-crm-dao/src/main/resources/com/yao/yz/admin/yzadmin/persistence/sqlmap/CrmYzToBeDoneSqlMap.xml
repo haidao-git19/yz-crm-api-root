@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.yz.admin.yzadmin.persistence.dao.crm.CrmYzToBeDoneDao">
+
+<!--数据库字段与对象属性映射 -->
+    <resultMap id="yzToBeDoneResultMap" type="com.yao.yz.admin.yzadmin.persistence.model.crm.CrmYzToBeDone">
+		<result property="id" column="id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="uid" column="uid"/>
+		<result property="selfDesc" column="self_desc"/>
+		<result property="photos" column="photos"/>
+		<result property="prescribePhotos" column="prescribe_photos"/>
+		<result property="inquiryFlag" column="inquiry_flag"/>
+		<result property="doctorDesc" column="doctor_desc"/>
+		<result property="questType" column="quest_type"/>
+		<result property="illnessKey" column="illness_key"/>
+		<result property="consult" column="consult"/>
+		<result property="advice" column="advice"/>
+		<result property="bookDoctorId" column="book_doctor_id"/>
+		<result property="bookDate" column="book_date"/>
+		<result property="bookStart" column="book_start"/>
+		<result property="bookEnd" column="book_end"/>
+		<result property="bookDesc" column="book_desc"/>
+		<result property="doctorId" column="doctor_id"/>
+		<result property="guestDepartment" column="guest_department"/>
+		<result property="finishFlag" column="finish_flag"/>
+		<result property="updateTime" column="update_time"/>
+		<association property="user" javaType="com.yao.yz.admin.yzadmin.persistence.model.crm.CrmYzUserExt">
+		  <result property="uid" column="uid"/>
+		  <result property="userSecondName" column="userSecondName"/>
+		  <result property="sex" column="sex"/>
+		</association>
+		<association property="doctor" javaType="com.yao.yz.admin.yzadmin.persistence.model.YzDoctor">
+		  <result property="id" column="id"/>
+		  <result property="firstName" column="first_name"/>
+		  <result property="secondName" column="second_name"/>
+		</association>
+	</resultMap>
+	
+	<select id="getTodayList" parameterType="int" resultMap="yzToBeDoneResultMap">
+	     SELECT a.*,b.second_name userSecondName,b.sex,c.first_name,c.second_name 
+	     FROM yz_archive a 
+         LEFT JOIN yz_user b on a.uid=b.uid 
+         LEFT JOIN yz_doctor c on a.book_doctor_id=c.id 
+	     where finish_flag='N' and a.book_date=curdate() 
+	     order by a.book_start
+    </select>
+    
+    <select id="getTomorrowList" parameterType="int" resultMap="yzToBeDoneResultMap">
+	    SELECT a.*,b.second_name userSecondName,b.sex,c.first_name,c.second_name 
+	    FROM yz_archive a
+	    LEFT JOIN yz_user b on a.uid=b.uid 
+        LEFT JOIN yz_doctor c on a.book_doctor_id=c.id 
+	    where finish_flag='N' and (TO_DAYS(a.book_date)-TO_DAYS(curdate()))=1 
+	    order by a.book_start
+    </select>
+    
+    <update id="todayFinish" parameterType="int">
+		update yz_archive set finish_flag='Y' where `id`=#{id}
+	</update>
+	
+	<update id="tomorrowFinish" parameterType="int">
+		update yz_archive set finish_flag='Y' where `id`=#{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.yao.yz</groupId>
+		<artifactId>yz-crm</artifactId>
+		<version>0.0.2</version>
+	</parent>
+	<artifactId>yz-crm-open</artifactId>
+	<version>0.0.1</version>
+	<name>yz-crm-open</name>
+	<description>提供API接口，供内部或者外部调用</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.yao.yz</groupId>
+			<artifactId>yz-crm-service</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		
+		<!-- 
+		<dependency>
+			<groupId>com.yao.yz.biz</groupId>
+			<artifactId>biz-diagnosis-srv</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.yao.yz.biz</groupId>
+			<artifactId>biz-diagnosis-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+		</dependency>
+		 -->
+	</dependencies>
+</project>

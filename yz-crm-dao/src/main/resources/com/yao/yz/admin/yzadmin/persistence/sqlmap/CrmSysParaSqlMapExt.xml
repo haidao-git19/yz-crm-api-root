@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.yz.admin.yzadmin.persistence.dao.crm.CrmAdminSysParameterDaoExt">
+
+	<!-- 查询图片域名 -->
+	<select id="getImageHost" resultType="java.lang.String">
+		select param_value from admin_sys_parameter where param_name = 'image_host';
+	</select>
+	
+	<!-- 根据参数名称查询参数值，v3.0新增 -->
+	<select id="getParameterByName" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.AdminSysParameterDao.adminSysParameterResultMap">
+		select param_value from admin_sys_parameter where param_name = #{0};
+	</select>
+	
+	
+</mapper>

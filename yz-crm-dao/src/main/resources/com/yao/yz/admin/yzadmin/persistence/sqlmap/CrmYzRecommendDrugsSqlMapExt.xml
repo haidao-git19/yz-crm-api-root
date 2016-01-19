@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.yao.yz.admin.yzadmin.persistence.dao.crm.CrmYzRecommendDrugsDaoExt">
+
+	<!-- 根据诊单查询用药建议 -->
+	<select id="getByInqueryId" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzRecommendDrugsDao.yzRecommendDrugsResultMap">
+		select * from yz_recommend_drugs where inquery_id = #{0}
+	</select>
+
+	<!-- 根据健康档案id查询用药建议 -->
+	<select id="getByArchiveId" resultMap="com.yao.yz.admin.yzadmin.persistence.dao.YzRecommendDrugsDao.yzRecommendDrugsResultMap">
+		select * from yz_recommend_drugs where archive_id = #{0}
+	</select>
+
+	<!-- 批量增加用药建议，必须保存列表数量不为0 -->
+	<insert id="addDrugList" parameterType="java.util.List">
+		INSERT INTO yz_recommend_drugs
+		(inquery_id,uid,archive_id,drug_code,drug_name,drug_desc,brand,picture,taking_type,prescription)
+		VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.inqueryId},#{item.uid},#{item.archiveId},#{item.drugCode},#{item.drugName},#{item.drugDesc},#{item.brand},#{item.picture},#{item.takingType},#{item.prescription})
+		</foreach>
+	</insert>
+
+	<!-- 删除指定健康档案的用药建议 -->
+	<delete id="deleteByArchiveId" parameterType="java.lang.Integer">
+		delete from
+		yz_recommend_drugs where archive_id = #{0}
+	</delete>
+
+</mapper>

@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.yao.yz</groupId>
+		<artifactId>yz-crm</artifactId>
+		<version>0.0.2</version>
+	</parent>
+	<artifactId>yz-crm-service</artifactId>
+	<version>0.0.1</version>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.yao.yz</groupId>
+			<artifactId>yz-crm-dao</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.yao.yz</groupId>
+			<artifactId>yz-crm-model</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>dubbo</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.sgroschupf</groupId>
+			<artifactId>zkclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.yao.baseinfo</groupId>
+			<artifactId>baseinfo-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
+
+		<!-- 诊单处理系统 -->
+		<dependency>
+			<groupId>com.yao.yz.biz</groupId>
+			<artifactId>biz-diagnosis-srv</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.yao.yz.biz</groupId>
+			<artifactId>biz-diagnosis-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.yao.yz.inquery</groupId>
+			<artifactId>biz-inquery-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.yao.yz.inquery</groupId>
+			<artifactId>biz-inquery-srv</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.yao.yz</groupId>
+			<artifactId>yz-weixin-service</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.yao.yz.biz</groupId>
+			<artifactId>biz-dispatch-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.yao.yz.biz</groupId>
+			<artifactId>biz-dispatch-srv</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+		</dependency>
+	</dependencies>
+
+</project>

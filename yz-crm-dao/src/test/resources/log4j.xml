@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "http://toolkit.alibaba-inc.com/dtd/log4j/log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{HH:mm:ss.SSS\} %-5p][%t]%c{1}.%M(%L) | %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="LOGFILE" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/app/yz/logs/crm/yz-crm-web.log" />
+		<param name="DatePattern" value=".yyyyMMdd-HH" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{HH:mm:ss.SSS\} %-5p][%t]%c{1}.%M(%L) | %m%n" />
+		</layout>
+	</appender>  
+	
+	<appender name="FREEMARKER-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="/app/yz/logs/crm/crm-freemarker.log"/>
+        <param name="append" value="true"/>
+        <param name="encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p %c - %m%n"/>
+        </layout>
+    </appender>
+
+	<!-- sql语句日志 -->
+	<appender name="IBatis" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-4r [%t] %-5p %c %x - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="INFO" />
+			<param name="LevelMax" value="INFO" />
+		</filter>
+	</appender>
+
+	<logger name="org.apache" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="LOGFILE" />    
+	</logger>
+
+	<logger name="org.springframework" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="LOGFILE" />
+	</logger>
+	
+	<logger name="net.sf" additivity="false">
+		<level value="WARN" />
+		<appender-ref ref="LOGFILE" />    
+	</logger>
+	
+	<logger name="com.yao.yz" additivity="false">
+		<level value="INFO"/>
+		<appender-ref ref="LOGFILE" />
+	</logger>
+	
+	<logger name="org.mybatis" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+	
+   	<logger name="freemarker.runtime" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="FREEMARKER-APPENDER"/>
+    </logger>
+    
+    <!-- sql语句日志 -->
+	<logger name="com.ibatis" additivity="true">
+		<level value="CONSOLE" />
+	</logger>
+
+	<logger name="java.sql.Connection" additivity="true">
+		<level value="INFO" />
+	</logger>
+
+	<logger name="java.sql.Statement" additivity="true">
+		<level value="INFO" />
+	</logger>
+
+	<logger name="java.sql.PreparedStatement" additivity="true">
+		<level value="INFO" />
+		<appender-ref ref="IBatis" />
+	</logger>
+
+	<logger name="java.sql.ResultSet" additivity="true">
+		<level value="INFO" />
+		<appender-ref ref="IBatis" />
+	</logger>
+	<!-- sql输出结束 -->
+    
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="LOGFILE" />
+	</root>
+	
+</log4j:configuration>

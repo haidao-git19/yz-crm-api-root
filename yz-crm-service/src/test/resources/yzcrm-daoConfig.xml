@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop
+			http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+	default-init-method="init" default-lazy-init="false"
+	default-destroy-method="destroy">
+
+	<!--属性加载 -->
+	<bean id="jdbcConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:yzcrm-db.properties</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="dataSource_R_yzadmin" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${datasource_yzcrm_r.driverClassName}" />
+		<property name="jdbcUrl" value="${datasource_yzcrm_r.url}" />
+		<property name="user" value="${datasource_yzcrm_r.username}" />
+		<property name="password" value="${datasource_yzcrm_r.password}" />
+		<property name="initialPoolSize" value="${datasource_yzcrm_r.initialPoolSize}" />
+		<property name="maxPoolSize" value="${datasource_yzcrm_r.maxPoolSize}" />
+		<property name="minPoolSize" value="${datasource_yzcrm_r.minPoolSize}" />
+		<property name="maxIdleTime" value="${datasource_yzcrm_r.maxIdleTime}" />
+	</bean>
+	<bean id="dataSource_W_yzadmin" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${datasource_yzcrm_w.driverClassName}" />
+		<property name="jdbcUrl" value="${datasource_yzcrm_w.url}" />
+		<property name="user" value="${datasource_yzcrm_w.username}" />
+		<property name="password" value="${datasource_yzcrm_w.password}" />
+		<property name="initialPoolSize" value="${datasource_yzcrm_w.initialPoolSize}" />
+		<property name="maxPoolSize" value="${datasource_yzcrm_w.maxPoolSize}" />
+		<property name="minPoolSize" value="${datasource_yzcrm_w.minPoolSize}" />
+		<property name="maxIdleTime" value="${datasource_yzcrm_w.maxIdleTime}" />
+	</bean>
+
+	<!--自定义数据源，将所有的数据源都纳入自定数据源管理 -->
+	<bean id="dataSource" class="com.yao.yz.util.datasource.DynamicDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<!--写数据源 -->
+				<entry key="dataSource_R_yzadmin" value-ref="dataSource_R_yzadmin" />
+				<!--读数据源 -->
+				<entry key="dataSource_W_yzadmin" value-ref="dataSource_W_yzadmin" />
+			</map>
+		</property>
+		<!-- 默认数据源 -->
+		<property name="defaultTargetDataSource" ref="dataSource_W_yzadmin"/>
+	</bean>
+	<!--配置myBatis数据库连接工厂 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations">
+			<array>
+				<value>
+				   classpath*:/com/yao/yz/admin/yzadmin/persistence/sqlmap/*.xml
+				</value>
+			</array>
+		</property>
+<!-- 		<property name="plugins">
+			<list>
+				<ref local="statementHandlerInterceptor" />
+			</list>
+		</property> -->
+	</bean>
+		
+	<!-- 
+	<bean id="statementHandlerInterceptor" class="com.yao.yz.admin.inteceptor.MybatisInterceptor" /> 
+	-->
+		
+	<!--采用自动扫描方式创建mapper bean -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.yao.yz.admin.yzadmin.persistence.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+	<!--采用AOP注解的方式决定使用哪个数据源 -->
+	<bean id="dataSourceAspect" class="com.yao.yz.util.datasource.DynamicDataSourceAspect" />
+	<aop:config>
+		<aop:aspect id="DynamicDataSourceAspect" ref="dataSourceAspect">
+			<aop:pointcut id="dataSourcePoint" expression="execution(* com.yao.yz.admin.yzadmin.persistence.dao..*(..))"/>
+			<aop:before method="before" pointcut-ref="dataSourcePoint" />
+		</aop:aspect>
+	</aop:config>
+	
+	<!-- 事务控制 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	  <property name="dataSource" ref="dataSource" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
